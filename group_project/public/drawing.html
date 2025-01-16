@@ -59,7 +59,7 @@
 
             <div class="row center">
                 <h2>Collaborative Drawing</h2>
-                <canvas id="canvas" width="80%" height="600"></canvas>
+                <canvas id="drawing_canvas" width="800" height="600"></canvas>
                 <p></p>
                 <br>
             </div>
@@ -90,12 +90,92 @@
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/scripts.js"></script>
-  <script src="js/scripts_drawing.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    const canvas = document.getElementById('drawing_canvas');
+    const canvas_page = canvas.getContext('2d');
+    let isDrawing = false;
+
     let socket = io();
-    socket.on('number',(msg)=>{
-        console.log('Random Number: ' + msg);
+
+    socket.on('connect', () => {
+      console.log('drawing - Socket.IO connection openned');
     });
+
+    socket.on('disconnect', (reason) => {
+      console.log('drawing - Socket.IO disconnected: ', reason);
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('drawing - Socket.IO connection error:', error);
+    });
+
+    socket.on('number',(msg) => {
+        console.log('drawing - Random Number: ' + msg);
+    });
+
+    // get the mouse position with two parameters x and y
+    function getPosition(mouse_pos) {
+      const canvas_rect = canvas.getBoundingClientRect(); // get the bounding numbers of the canvas rectangle
+      const x_pos = (mouse_pos.clientX || mouse_pos.touches[0].clientX) - canvas_rect.left; 
+      const y_pos = (mouse_pos.clientY || mouse_pos.touches[0].clientY) - canvas_rect.top;
+      return {x_pos, y_pos};
+    }
+
+    function startDrawing(mouse_pos) {
+      isDrawing = true;
+      const {x_pos, y_pos} = getPosition(mouse_pos);
+      canvas_page.beginPath();
+      canvas_page.moveTo(x_pos, y_pos);
+
+      socket.emit('draw', {x_pos, y_pos, type: 'start'});
+    }
+
+    function endDrawing() {
+      isDrawing = false;
+      canvas_page.closePath();
+
+      socket.emit('draw', {type: 'end'});
+    }
+
+    function draw(mouse_pos) {
+      if (!isDrawing) return;
+      const {x_pos, y_pos} = getPosition(mouse_pos);
+      drawOnCanvas(x_pos, y_pos);
+
+      socket.emit('draw', {x_pos, y_pos, type: 'draw'});
+    }
+
+    function drawOnCanvas(x_pos, y_pos) {
+      canvas_page.lineTo(x_pos, y_pos);
+      canvas_page.stroke();
+    }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mouseup', endDrawing);
+    canvas.addEventListener('mousemove', draw);
+
+    canvas.addEventListener('touchstart', (mouse_pos) => {
+      mouse_pos.preventDefault();
+      startDrawing(mouse_pos);
+    });
+    canvas.addEventListener('touchend', endDrawing);
+    canvas.addEventListener('touchmove', draw);
+
+    socket.on('draw', (mouse_data) => {
+      switch (mouse_data.type) {
+        case 'start':
+          canvas_page.beginPath();
+          canvas_page.moveTo(mouse_data.x, mouse_data.y);
+          break;
+        case 'draw':
+          drawOnCanvas(mouse_data.x, mouse_data.y);
+          break;
+        case 'end':
+          canvas_page.closePath();
+          break;
+      }
+    });
+    
   </script>
 </html>

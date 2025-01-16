@@ -37,7 +37,7 @@ async function runDBConnection() {
 }
 
 app.get('/', function (req,res) {
-    res.render('indexMongo.html');
+    res.render('admin.html');
 });
 
 app.get('/api/cats', (req,res) => {
