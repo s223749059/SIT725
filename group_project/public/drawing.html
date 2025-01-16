@@ -60,11 +60,7 @@
             <div class="row center">
                 <h2>Collaborative Drawing</h2>
                 <canvas id="canvas" width="80%" height="600"></canvas>
-                <p><b>Reference from:</b></p>
-                <ul>
-                    <li>LaiProgramming website: https://laiprogramming.com/drawing/</li>
-                    <li>GitHub website: https://github.com/pstakoun/socket.io-drawing</li>
-                </ul>
+                <p></p>
                 <br>
             </div>
 
@@ -96,5 +92,10 @@
   <script src="js/scripts.js"></script>
   <script src="js/scripts_drawing.js"></script>
   <script src="/socket.io/socket.io.js"></script>
-  
+  <script>
+    let socket = io();
+    socket.on('number',(msg)=>{
+        console.log('Random Number: ' + msg);
+    });
+  </script>
 </html>

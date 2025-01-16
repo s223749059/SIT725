@@ -9,6 +9,9 @@ let collection;
 
 // var http = require('http').Server(app);
 // var io = require('socket.io')(http);
+const { Socket } = require('socket.io');
+let http = require('http').createServer(app);
+let io = require('socket.io')(http);
 
 app.use(express.static(__dirname + '/public'))
 app.use(express.json());
@@ -62,7 +65,20 @@ function getAllCats(callback){
     collection.find({}).toArray(callback);
 }
 
-app.listen(port, ()=>{
+io.on('connection',(socket)=>{
+    console.log('user connected');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+
+    setInterval(()=>{
+        x=parseInt(Math.random()*10);
+        socket.emit('number', x);
+        console.log('Emmiting Number '+x);
+    }, 1000)
+});
+
+http.listen(port, ()=>{
     console.log('express server started');
     runDBConnection();
 });
