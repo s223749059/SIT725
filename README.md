@@ -29,9 +29,11 @@ The Amazing Fashionable application is run by executing the following command li
 - <b>Database:</b> MongoDB
 
 <h2>Usages:</h2>
+
 - Open the application on the web browser via the URL: <i>http://localhost:3000</i>
 - Access the website features with attractive clothes samples from interactive links and functions
 - Use the admin tools to upload clothes data to the gallery
 - Perform simple fashion drawings to express ideas and suggestions
+
 
 
