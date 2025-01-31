@@ -19,6 +19,25 @@
     <nav class="black">
       <div class="nav-wrapper">
         <a class="brand-logo center" style="font-size: large; font-family: 'Times New Roman', Times, serif;"><i>Introducing... a custom clothing website</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a id="user_login" class="modal-trigger" href="#modal_login">Admin Login</a></li>
+            <li><a></a></li>
+        </ul>
+      </div>
+
+      <div id="modal_login" class="modal">
+        <div class="modal-content">
+            <label for="uname"><b>Username</b></label>
+            <input id="uname" type="text" placeholder="Enter Username" name="uname" required>
+
+            <label for="psw"><b>Password</b></label>
+            <input id="psw" type="password" placeholder="Enter Password" name="psw" required>
+
+            <div class="input-field col s12 center-align">
+                <a class="waves-effect waves-light btn grey" id="submit_login">Login</a>
+                <a class="waves-effect waves-light btn grey" id="reset_login">Reset username or password</a>
+            </div>
+        </div>
       </div>
     </nav>
 
